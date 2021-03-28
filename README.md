@@ -15,5 +15,6 @@ TO DO
 
 TO DO
 
-**CONSIDER:**
+**FINISH AND CONSIDER:**
+- Finish properties restore from backup
 - startup args, such as # logs to load
