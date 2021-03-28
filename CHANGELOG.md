@@ -20,5 +20,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Modified
 - Updated LICENSE.
 
-[Unreleased]: https://github.com/iwcharlton/minecraft-monitor/0.0.0...HEAD
+[Unreleased]: https://github.com/iwcharlton/minecraft-monitor/compare/0.0.0...main
 [0.0.0]: https://github.com/iwcharlton/minecraft-monitor/releases/tag/0.0.0
