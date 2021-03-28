@@ -1,0 +1,93 @@
+{# This simple template derives from ``base.html``. See ``base.html`` for
+  more information about template inheritance. #}
+{%- extends "base.html" %}
+
+{# Loads some of the macros included with Flask-Bootstrap. We are using the
+  utils module here to automatically render Flask's flashed messages in a
+  bootstrap friendly manner #}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{# Inside the ``content`` is where you should place most of your own stuff.
+  This will keep scripts at the page end and a navbar you add on later
+  intact. #}
+{% block content %}
+  <div class="container">
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+    {%- if messages %}
+    <div class="row">
+      <div class="col-md-12">
+        {{utils.flashed_messages(messages)}}
+      </div>
+    </div>
+    {%- endif %}
+    {%- endwith %}
+    <div class="jumbotron">
+      <h1>Minecraft Server Details</h1>
+      <p class="lead">All of the server info.</p>
+    </div>
+    {%- with server = refresh_server() %}
+    {%- if server is none %}
+    <div class="text-center alert alert-warning">PLEASE WAIT WHILE THE SERVER FINISHES LOADING...</div>
+    {%- else %}
+    <h2>Server Details
+      {%- if server.is_running %}
+      <span class="badge badge-secondary running">RUNNING</span>
+      {% else %}
+      <span class="badge badge-secondary not-running">NOT RUNNING</span>
+      {% endif %}
+    </h2>
+    <div class="container-fluid">
+      {%- for key, value in server.details.items() %}
+      <div class="row">
+        <div class="col-md-6 prop-light"><p>{{key}}</p></div>
+        <div class="col-md-6"><p>{{value}}</p></div>
+      </div>
+      {% endfor %}
+    </div>
+    <h2>Player Whitelist</h2>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6 prop-head"><p>Name</p></div>
+        <div class="col-md-6 prop-head"><p>UUID</p></div>
+      </div>
+      {%- for name, player in server.players.items() %}
+      {% if player_is_whitelisted(name) %}
+      {% set uuid = get_player_uuid(name) %}
+      <div class="row">
+        <div class="col-md-6 prop-light"><p>{{name}}</p></div>
+        <div class="col-md-6 prop-light"><p>{{uuid}}</p></div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <h2>Server Logs</h2>
+    <div id="accordion">
+      {%- for date, log in server.logs.items()|sort(attribute='0') %}
+      <div class="card card-light">
+        <div class="card-header container-fluid" id="heading-{{date}}">
+          <div class="card-title row">
+            <div class="col-md-10">
+              <p>{{date}}</p>
+            </div>
+            <div class="col-md-2 float-right">
+              <button class="btn btn-stretch-small collapsed" data-toggle="collapse" data-target="#{{date}}-log" aria-expanded="false" aria-controls="{{date}}-log">EXPAND</button>
+            </div>
+          </div>
+        </div>
+        <div class="collapse" id="{{date}}-log" aria-labelledby="heading-{{date}}" data-parent="#accordion">
+          <div class="card-body">
+            <p><pre>{{log.text}}</pre></p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {%- endif %}
+    {%- endwith %}
+  </div>
+  {{ super() }}
+{%- endblock %}
