@@ -215,7 +215,7 @@ class Server(LogData):
     
   def save_properties(self):
     if not self.backup_properties():
-        return 'ERRER: unable to backup propertyfile, aborting', 500
+      return 'ERRER: unable to backup propertyfile, aborting', 500
 
     new_properties = {}
     for key, val in self.properties.items():
@@ -232,7 +232,10 @@ class Server(LogData):
       print('Saving properties file...')
       prop_path = os.path.join(self.location, f'server.properties')
       with open(prop_path, 'wt') as f:
-        self.write_properties(f)
+        self.write_properties(f, self.properties)
+        
+      if self.is_running:
+        self.requires_restart = 'Requires restart to relaod properties'
       return 'Properties saved to file', 200
     except:
       return 'ERROR: Unable to save properties to file', 500
@@ -241,11 +244,28 @@ class Server(LogData):
     backup = request.args.get('backup')
     if backup is None:
       return 'ERRER: backup not provided in query to save_properties', 500
-    prop_path = os.path.join(self.location, f'server.properties.backup.{backup}')
-    if not os.path.exists(prop_path):
+    backup_path = os.path.join(self.location, f'server.properties.backup.{backup}')
+    if not os.path.exists(backup_path):
       return 'ERRER: property backup {prop_path} does not exist', 500
     
-    return f'Restored properties to backup {backup}', 200
+    if not self.backup_properties():
+      return 'ERRER: unable to backup propertyfile, aborting', 500
+
+    try:
+      with open(backup_path) as f:
+        self.parse_properties(f, self.properties)
+
+      prop_path = os.path.join(self.location, f'server.properties')
+      with open(prop_path, 'wt') as f:
+        self.write_properties(f, self.properties)
+        
+      if self.is_running:
+        self.requires_restart = 'Requires restart to relaod properties'
+      return 'Properties saved to file', 200
+    except:
+      return 'ERROR: Unable to save properties to file', 500
+
+    return 'Restored property backup {prop_path} ', 200
 
   def backup_properties(self):
     backup = 1
@@ -256,13 +276,13 @@ class Server(LogData):
     try:
       print(f'Backing up properties to file {prop_path}...')
       with open(prop_path, 'wt') as f:
-        self.write_properties(f)
+        self.write_properties(f, self.properties)
       return True
     except:
       print(f'Unable to backup properties to file {prop_path}')
       return False
 
-  def write_properties(self, file):
+  def write_properties(self, file, properties):
     file.write('#Minecraft Server Properties\n')
     file.write('#' + datetime.datetime.now().strftime('%c') + '\n')
     for key, val in self.properties.items():
@@ -271,24 +291,24 @@ class Server(LogData):
       else:
         file.write(f'{key}=\n')
 
-  def parse_properties(self, properties):
-    prop_path = os.path.join(self.location, 'server.properties')
-    if os.path.exists(prop_path):
-      print('parsing properties...')
-      with open(prop_path) as f:
-        for line in f:
-          if not line.startswith('#'):
-            if self.prop_separator in line:
-              name, value = line.split(self.prop_separator, 1)
-              properties[name] = value.strip()
-            else:
-              name = line.split(self.prop_separator, 1)
-              properties[name] = None
+  def parse_properties(self, f, properties):
+    print('parsing properties...')
+    for line in f:
+      if not line.startswith('#'):
+        if self.prop_separator in line:
+          name, value = line.split(self.prop_separator, 1)
+          properties[name] = value.strip()
+        else:
+          name = line.split(self.prop_separator, 1)
+          properties[name] = None
               
   def load_properties(self):
     new_properties = {}
-    self.parse_properties(new_properties)
-    self.properties = new_properties
+    prop_path = os.path.join(self.location, 'server.properties')
+    if os.path.exists(prop_path):
+      with open(prop_path) as f:
+        self.parse_properties(f, new_properties)
+      self.properties = new_properties
     
     self.properties_backups = []
     backup = 1
