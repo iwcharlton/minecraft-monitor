@@ -7,8 +7,6 @@ start it, stop it, update settings, add people onto the whitelist and so on.
 
 It's not meant to be sophisticated or pretty, just functional.
 
-[[_TOC_]]
-
 ## Installing
 
 TO DO
