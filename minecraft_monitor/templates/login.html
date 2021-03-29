@@ -1,0 +1,40 @@
+{%- extends "base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+ <div class="container">
+ {%- with messages = get_flashed_messages(with_categories=True) %}
+ {%- if messages %}
+   <div class="row">
+     <div class="col-md-12">
+       {{utils.flashed_messages(messages)}}
+     </div>
+   </div>
+  {%- endif %}
+  {%- endwith %}
+  <div class="jumbotron">
+    <h1>Minecraft Monitor Login</h1>
+    <p class="lead">Only registered users can login. Talk to the sysadmin (Dad) to get registered.</p>
+    <form action="/login" method="post">
+      <div class="field">
+        <div class="control">
+          <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
+        </div>
+      </div>
+      <div class="field">
+        <div class="control">
+          <input class="input is-large" type="password" name="password" placeholder="Your Password">
+        </div>
+      </div>
+      {% if request.args.get('next') is not none %}
+      <div class="field">
+        <input type="hidden" name="next" value="{{request.args.get('next')}}">
+      </div>
+      {% endif %}
+      <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+    <br/>
+  </div>
+</div>
+{{ super() }}
+{%- endblock %}

@@ -1,0 +1,79 @@
+.card-light {
+  background-color: white;
+  border:gray;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 0.25rem;
+  margin-top: 5px;
+}
+
+.card-title {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.card-body {
+  margin: 10px 10px 10px 10px;
+}
+
+.btn-stretch-small {
+  width: 100%;
+  font-size: x-small;
+}
+
+.stats-border {
+  border: 2px solid lightgray;
+  border-radius: 0.5rem;
+  margin: 0px;
+}
+
+.stats-bar {
+  background-color:lightgray;
+}
+
+.running {
+  background-color: darkgreen;
+}
+.not-running {
+  background-color: darkred;
+}
+.loading {
+  background-color: darkgrey;
+}
+
+.whitelisted {
+  background-color: darkgreen;
+}
+.blacklisted {
+  background-color: darkred;
+}
+.not-whitelisted {
+  background-color: darkgrey;
+}
+
+.whitelisted-light {
+  background-color: rgb(250, 250, 250);
+}
+.blacklisted-light {
+  background-color: rgb(190, 190, 190);
+}
+
+.prop-head {
+  background-color: rgb(240, 240, 240);
+  font-weight: bold;
+}
+.prop-light {
+  background-color: rgb(250, 250, 250);
+}
+.prop-field {
+  width: 100%;
+  box-sizing:border-box;
+}
+.no-pad {
+  padding: 0px;
+}
+
+[class*="col-"] {
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}

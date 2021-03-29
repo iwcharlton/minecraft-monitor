@@ -1,0 +1,51 @@
+{%- extends "base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+ <div class="container">
+  {%- with messages = get_flashed_messages(with_categories=True) %}
+  {%- if messages %}
+    <div class="row">
+      <div class="col-md-12">
+        {{utils.flashed_messages(messages)}}
+      </div>
+    </div>
+  {%- endif %}
+  {%- endwith %}
+    <div class="jumbotron">
+      <h1>Minecraft Player Details</h1>
+      <p class="lead">All of the player info.</p>
+    </div>
+    {%- with server = refresh_server() %}
+    {%- if server is none %}
+    <div class="text-center alert alert-warning">PLEASE WAIT WHILE THE SERVER FINISHES LOADING...</div>
+    {%- else %}
+    {% set max_player = get_max_player_stats() %}
+    {%- for name, player in server.players.items() %}
+    {% if player_is_whitelisted(name) %}
+    <h2>{{name}}  <span class="badge badge-secondary whitelisted">WHITELISTED</span></h2>
+    {% elif player_is_blacklisted(name) %}
+    <h2>{{name}}  <span class="badge badge-secondary blacklisted">BLACKLISTED</span></h2>
+    {% else %}
+    <h2>{{name}}  <span class="badge badge-secondary not-whitelisted">NOT WHITELISTED</span></h2>
+    {% endif %}
+    <div class="container-fluid">
+      {%- for key, value in player.items() %}
+      {% set id = name+sanitise_string(key) %}
+      <div class="row">
+        <div class="col-md-6 prop-head"><label for="{{id}}">{{key}}</label></div>
+        {% if value|int(-1) != -1 %}
+        {% set percent = 100 * value // max_player[key] %}
+        <div class="col-md-6 no-pad"><div class="stats-border text-center"><div class="stats-bar" style="width: {{percent}}%" id="{{id}}">{{value}}</div></div></div>
+        {% else %}
+        <div class="col-md-6 no-pad"><input class="field prop-field" type="input" name="{{id}}" id="{{id}}" disabled value="{{value}}"></input></div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {%- endfor %}
+    {%- endif %}
+    {%- endwith %}
+  </div>
+  {{ super() }}
+{%- endblock %}

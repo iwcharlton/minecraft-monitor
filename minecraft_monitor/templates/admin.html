@@ -1,0 +1,221 @@
+{%- extends "base.html" %}
+{% import "bootstrap/utils.html" as utils %}
+
+{% block scripts %}
+{{super()}}
+<script type=text/javascript>
+
+  $(function() {
+    $("#start_server").click(function (event) {
+      var java_args = $("#java_args").val();
+      $(this).text('STARTING SERVER...');
+      $(this).prop('disabled', true);
+      $.getJSON('/start_server', { "java_args": java_args }, function(data) { })
+        .always(function() {
+          window.location.reload();
+        });
+      return false;
+    })
+  });
+
+  $(function() {
+    $("#stop_server").click(function (event) {
+      $(this).text('STOPPING SERVER...');
+      $(this).prop('disabled', true);
+      $.getJSON('/stop_server', { }, function(data) { })
+        .always(function() {
+          window.location.reload();
+        });
+      return false;
+    });
+  });
+
+  $(function() {
+    $("#get_uuid").click(function (event) {
+      var name = $("#player_name").val();
+      $.getJSON('/get_user_uuid', { "username": name }, function(data) { $("#player_uuid").val(data['uuid']); });
+      return false;
+    });
+  });
+
+  $(function() {
+    $("#add_player").click(function (event) {
+      var name = $("#player_name").val();
+      var uuid = $("#player_uuid").val();
+      $.getJSON('/add_player_to_whitelist', { "player": name, "uuid": uuid }, function(data) { })
+        .always(function() {
+          window.location.reload();
+        });
+      return false;
+    });
+  });
+
+  $(function() {
+    $("#restore_properties").click(function (event) {
+      var backup = $("#backups").val();
+      $.getJSON('/restore_properties', { "backup": backup }, function(data) { })
+        .always(function() {
+          window.location.reload();
+        });
+      return false;
+    });
+  });
+
+  {% with server = get_server() %}
+  {% if server is not none %}
+  
+  $(function() {
+    $("#save_properties").click(function (event) {
+      prop_data = {};
+      {%- for key, value in server.properties.items() %}
+      {% set id = "prop-"+sanitise_string(key)%}
+      prop_data["{{key}}"] = $("#{{id}}").val();
+      {% endfor %}
+      $.getJSON('/save_properties', prop_data, function(data) { })
+        .always(function() {
+          window.location.reload();
+        });
+      return false;
+    });
+  });
+
+  {% for name, player in server.players.items() %}
+  {% if player_is_whitelisted(name) %}
+  $(function() {
+    $("#blacklist_player_{{name}}").click(function (event) {
+      $(this).prop('disabled', true);
+      $.getJSON('/blacklist_player', { "player": "{{name}}" }, function(data) { })
+        .always(function() {
+          window.location.reload();
+        });
+      return false;
+    });
+  });
+  {% elif player_is_blacklisted(name) %}
+  $(function() {
+    $("#whitelist_player_{{name}}").click(function (event) {
+      $(this).prop('disabled', true);
+      $.getJSON('/whitelist_player', { "player": "{{name}}" }, function(data) { })
+        .always(function() {
+          window.location.reload();
+        });
+      return false;
+    });
+  });
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+</script> 
+{% endblock %}
+
+{# Inside the ``content`` is where you should place most of your own stuff.
+  This will keep scripts at the page end and a navbar you add on later
+  intact. #}
+{% block content %}
+  <div class="container" style="margin-bottom: 20px;">
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+    {%- if messages %}
+    <div class="row">
+      <div class="col-md-12">
+        {{utils.flashed_messages(messages)}}
+      </div>
+    </div>
+    {%- endif %}
+    {%- endwith %}
+    <div class="jumbotron">
+      <h1>Minecraft Server Admin</h1>
+      <p class="lead">Server admin, starting, stopping, modifying properties and whitelist.</p>
+    </div>
+    {%- with server = refresh_server() %}
+    {%- if server is none %}
+    <div class="text-center alert alert-warning">PLEASE WAIT WHILE THE SERVER FINISHES LOADING...</div>
+    {%- else %}
+      {%- if server.is_running() %}
+        {% set label_class = "running" %}
+        {% set args_dis = "disabled" %}
+        {% set label = "RUNNING" %}
+        {% set action = "STOP SERVER" %}
+        {% set id = "stop_server" %}
+      {% else %}
+        {% set label_class = "not-running" %}
+        {% set args_dis = "" %}
+        {% set label = "NOT RUNNING" %}
+        {% set action = "START SERVER" %}
+        {% set id = "start_server" %}
+      {% endif %}
+    <h2>Server Control  
+      <span class="badge badge-secondary {{label_class}}">{{label}}</span>
+    </h2>
+    <div class="container-fluid">
+      {% if server.requires_restart|length %}
+      <div class="row">
+        <div class="col-md-12 text-center alert alert-warning">{{server.requires_restart}}</div>
+      </div>
+      {% endif %}
+      <div class="row">
+        <div class="col-md-2 prop-light">Java Arguments</div>
+        <div class="col-md-10 no-pad"><input class="field prop-field" type="input" name="java_args" id="java_args" {{args_dis}} value="{{server.java_args}}"></input></div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center no-pad"><button class="btn btn-stretch-small btn-primary btn-block" id="{{id}}">{{action}}</button></div>
+      </div>
+    </div>
+    <h2>Edit Server Properties</h2>
+    <div class="container-fluid">
+      <form action="/admin" method="post">
+        {%- for key, value in server.properties.items() %}
+        {% set id = "prop-"+sanitise_string(key)%}
+        {%- if loop.index % 2 == 1 %}
+        <div class="row">
+        {% endif %}
+          <div class="col-md-3 prop-light"><label for="{{id}}">{{key}}</label></div>
+          <div class="col-md-3 no-pad"><input class="field prop-field" type="input" name="{{id}}" id="{{id}}" value="{{value}}"></input></div>
+        {%- if loop.index % 2 == 0 %}
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div class="row">
+          <div class="col-md-12 text-center no-pad"><button class="btn btn-stretch-small btn-primary btn-block" id="save_properties">SAVE CHANGES</button></div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 prop-light"><label for="backups">Restore properties from backup</label></div>
+          <div class="col-md-3 prop-light no-pad"><select id="backups" name="backups" style="width: 100%;">
+            {% for backup in server.properties_backups %}
+            <option value="{{loop.index}}">{{backup}}</option>
+            {% endfor %}
+          </select></div>
+          <div class="col-md-6 text-center no-pad"><button class="btn btn-stretch-small btn-block" id="restore_properties">RESTORE</button></div>
+        </div>
+      </form>
+    </div>
+    <h2>Edit Player Whitelist</h2>
+    <div class="container-fluid">
+      {%- for name, player in server.players.items() %}
+      {% set uuid = get_player_uuid(name) %}
+      {% if player_is_whitelisted(name) %}
+      <div class="row">
+        <div class="col-md-5 whitelisted-light"><p>{{name}}</p></div>
+        <div class="col-md-5 whitelisted-light"><p>{{uuid}}</p></div>
+        <div class="col-md-2 text-center no-pad"><button class="btn btn-stretch-small btn-block" id="blacklist_player_{{name}}">BLACKLIST</button></div>
+      </div>
+      {% elif player_is_blacklisted(name) %}
+      <div class="row">
+        <div class="col-md-5 blacklisted-light"><p>{{name}}</p></div>
+        <div class="col-md-5 blacklisted-light"><p>{{uuid}}</p></div>
+        <div class="col-md-2 text-center no-pad"><button class="btn btn-stretch-small btn-block" id="whitelist_player_{{name}}">WHITELIST</button></div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="row">
+        <div class="col-md-4 no-pad"><input class="field prop-field" type="input" name="player_name" id="player_name"></input></div>
+        <div class="col-md-1 text-center no-pad"><button class="btn btn-stretch-small" id="get_uuid">GET UUID</button></div>
+        <div class="col-md-5 no-pad"><input class="field prop-field" type="input" name="player_uuid" id="player_uuid"></input></div>
+        <div class="col-md-2 text-center no-pad"><button class="btn btn-primary btn-stretch-small btn-block" id="add_player">ADD PLAYER</button></div>
+      </div>
+    </div>
+    {%- endif %}
+    {%- endwith %}
+  </div>
+  {{ super() }}
+{%- endblock %}
