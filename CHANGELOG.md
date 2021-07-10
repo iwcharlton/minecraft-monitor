@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3]
+
+### Modified
+- Updated [README.md](README.md) to include full instructions.
+
+### Added
+- Added example-config.json
+
 ## [0.0.2]
 
 ### Modified
@@ -32,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated LICENSE.
 
 [Unreleased]: https://github.com/iwcharlton/minecraft-monitor/compare/main...develop
+[0.0.3]: https://github.com/iwcharlton/minecraft-monitor/compare/0.0.2...0.0.3
 [0.0.2]: https://github.com/iwcharlton/minecraft-monitor/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/iwcharlton/minecraft-monitor/compare/0.0.0...0.0.1
 [0.0.0]: https://github.com/iwcharlton/minecraft-monitor/releases/tag/0.0.0
