@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2]
+
 ### Modified
 - Refactored user management to having users in the config.JSON.
 
@@ -30,5 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated LICENSE.
 
 [Unreleased]: https://github.com/iwcharlton/minecraft-monitor/compare/main...develop
+[0.0.2]: https://github.com/iwcharlton/minecraft-monitor/compare/0.0.1...0.0.2
 [0.0.1]: https://github.com/iwcharlton/minecraft-monitor/compare/0.0.0...0.0.1
 [0.0.0]: https://github.com/iwcharlton/minecraft-monitor/releases/tag/0.0.0
