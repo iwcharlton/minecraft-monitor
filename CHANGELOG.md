@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Modified
+- Updated [README.md](README.md) to include full instructions.
+
+### Added
+- Added example-config.json
+
 ## [0.0.2]
 
 ### Modified

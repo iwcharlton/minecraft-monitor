@@ -129,4 +129,4 @@ dmypy.json
 .pyre/
 
 # Private configuration
-*config.json
+my*config.json
