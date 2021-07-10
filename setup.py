@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='MinecraftMonitor',
-      version='0.0.2',
+      version='0.0.3',
       description='Simple Minecraft Server Monitor',
       author='Iain Charlton',
       author_email='na@na.com',

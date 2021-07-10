@@ -1,7 +1,7 @@
 # The Minecraft Monitor
 
 The minecraft-monitor was created as a small, lightweight web-app that I could
-run alongside my Minecraft Server to give my basic visibility and control over
+run alongside my Minecraft Server to give me basic visibility and control over
 the everyday things so I wouldn't have to ssh onto my server all the time to
 start it, stop it, update settings, add people onto the whitelist and so on.
 
@@ -11,7 +11,7 @@ It's not meant to be sophisticated or pretty, just functional.
 
 Installation is not 100% necessary to use the monitor as a command line script.
 
-Installation as a package using:
+Installation as a package can be done with standard setup, using:
 
 ```
 python setup.py install
@@ -22,7 +22,7 @@ python setup.py install
 From the command line, run:
 
 ```
-minecraft_monitor.py --config .\path\to\config.json
+.\minecraft_monitor\minecraft_monitor.py --config .\path\to\config.json
 ```
 
 For servers that have been running a long time, startup can take a long time,
@@ -60,12 +60,12 @@ with the updated config file and you will then be able to login with
 
 ## Using in Other Scripts
 
-To use in ther scripts:
+To use in other scripts:
 
 ```
 import minecraft_monitor
 
-confg = {}
+config = {}
 # Requires the config to be populated as in example_config.json
 
 # Use an additional log_limit argument if required
