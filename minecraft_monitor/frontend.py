@@ -61,12 +61,11 @@ def login():
     user = User.find(email)
     if user is None:
       flash('Unrecognised email', category='error')
-    elif not check_password_hash(user.password, password):
+    elif not user.check_password_hash(password):
       flash('Incorrect password', category='error')
     else:
       login_user(user)
       flash('Successfully logged in as {}'.format(current_user.name))
-    print(generate_password_hash(password, method='sha256'))
       
   if next is None or not is_safe_url(next):
     return render_template('login.html')
