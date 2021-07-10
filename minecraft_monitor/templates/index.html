@@ -2,20 +2,58 @@
 {% import "bootstrap/utils.html" as utils %}
 
 {% block content %}
- <div class="container">
- {%- with messages = get_flashed_messages(with_categories=True) %}
- {%- if messages %}
-   <div class="row">
-     <div class="col-md-12">
-       {{utils.flashed_messages(messages)}}
-     </div>
-   </div>
- {%- endif %}
- {%- endwith %}
-   <div class="jumbotron">
-     <h1>Minecraft Monitor</h1>
-     <p class="lead">A basic minecraft server monitor that tells you what's up on your Minecraft server.</p>
-   </div>
+  <div class="container">
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+    {%- if messages %}
+    <div class="row">
+      <div class="col-md-12">
+        {{utils.flashed_messages(messages)}}
+      </div>
+    </div>
+    {%- endif %}
+    {%- endwith %}
+    <div class="jumbotron">
+      <h1>Minecraft Monitor</h1>
+      <p class="lead">A basic minecraft server monitor that tells you what's up on your Minecraft server.</p>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card card-dark h-100">
+            <div class="card-body">
+              <h2 class="card-header">Server Details</h2>
+              <p class="card-text">PIC?? Go here to see the server details - whether it's running, who's whitelisted, etc.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-dark h-100">
+            <div class="card-body">
+              <h2 class="card-header">Player Details</h2>
+              <p class="card-text">PIC?? Go here to see the player stats</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card card-dark h-100">
+            <div class="card-body">
+              <h2 class="card-header">Server Admin</h2>
+              <p class="card-text">PIC?? Go here to see manage the server</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card card-dark h-100">
+            <div class="card-body">
+              <h2 class="card-header">Managing Users</h2>
+              <p class="card-text">Not provided sa part of this interface to keep the security vulnerabilities down - you'll need to perform some backend admin to change users</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   {{ super() }}
 {%- endblock %}

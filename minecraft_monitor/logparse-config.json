@@ -33,7 +33,7 @@
       "regex": "([A-z0-9_]*) joined the game",
       "player": 0,
       "assign-time": [
-        "Last Login"
+        "Last Logged In"
       ],
       "increment": [
         "Logins"
@@ -43,7 +43,7 @@
       "regex": "([A-z0-9_]*) left the game",
       "player": 0,
       "assign-time": [
-        "Last Logout"
+        "Last Logged Out"
       ]
     },
     "shot": {

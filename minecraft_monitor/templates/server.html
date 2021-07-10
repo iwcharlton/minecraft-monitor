@@ -1,10 +1,6 @@
 {%- extends "base.html" %}
 {% import "bootstrap/utils.html" as utils %}
 
-{% block scripts %}
-{{super()}}
-{% endblock %}
-
 {% block content %}
   <div class="container">
     {%- with messages = get_flashed_messages(with_categories=True) %}
@@ -22,7 +18,10 @@
     </div>
     {%- with server = refresh_server() %}
     {%- if server is none %}
-    <div class="text-center alert alert-warning">PLEASE WAIT WHILE THE SERVER FINISHES LOADING...</div>
+    <div class="text-center alert alert-info">
+      <p>PLEASE WAIT WHILE THE SERVER FINISHES LOADING...</p>
+      <div class="stats-border text-center"><div class="stats-bar" style="width: 0%" id="progress">...</div></div>
+    </div>
     {%- else %}
     <h2>Server Details
       {%- if server.is_running() %}

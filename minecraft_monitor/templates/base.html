@@ -16,6 +16,25 @@ Minecraft Monitor
   <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='minecraft_monitor.css')}}">
 {% endblock %}
 
+{% block scripts -%}
+  {{super()}}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+  <script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+      var socket = io();
+      socket.on('connect', function() {
+        socket.on('load-progress', function(data) {
+          $('#progress').text('LOADING ' + data['file']);
+          $('#progress').css('width', data['percent']+'%');
+        });
+        socket.on('load-complete', function() {
+          window.location.reload();
+        });
+      });
+    });
+  </script>
+{% endblock %}
+
 {% block navbar %}
 {{nav.frontend_top.render()}}
 {% endblock %}
@@ -30,7 +49,7 @@ Minecraft Monitor
         <p>The Minecraft Monitor</p>
         <p style="font-size: small;">&copy; Iain Charlton</p>
         <p style="font-size: small;">The minecraft-monitor was created as a small, lightweight web-app that I could run alongside my Minecraft Server
-        to give my basic visibility and control over the everyday things so I wouldn't have to ssh onto my server all the time to start it,
+        to give me basic visibility and control over the everyday things so I wouldn't have to ssh onto my server all the time to start it,
       stop it, update settings, add people onto the whitelist and so on. It's not meant to be sophisticated or pretty, just functional.</p>
       </div>
       <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">

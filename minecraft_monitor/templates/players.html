@@ -18,7 +18,10 @@
     </div>
     {%- with server = refresh_server() %}
     {%- if server is none %}
-    <div class="text-center alert alert-warning">PLEASE WAIT WHILE THE SERVER FINISHES LOADING...</div>
+    <div class="text-center alert alert-info">
+      <p>PLEASE WAIT WHILE THE SERVER FINISHES LOADING...</p>
+      <div class="stats-border text-center"><div class="stats-bar" style="width: 0%" id="progress">...</div></div>
+    </div>
     {%- else %}
     {% set max_player = get_max_player_stats() %}
     {%- for name, player in server.players.items() %}

@@ -10,6 +10,7 @@ import signal
 import subprocess
 from enum import Enum
 from flask import request
+from flask_socketio import emit
 
 from log_parser import LogParser, date_from_name
 from whitelist import Whitelist
@@ -47,7 +48,7 @@ class LogData(object):
       else:
         new_stats = self.players[name]
         for key, val in stats.items():
-          if key == 'Last Login' or key == 'Last Logout': # This should really be done by identifying properties as being of different types
+          if key == 'Last Logged In' or key == 'Last Logged Out': # This should really be done by identifying properties as being of different types
             if key not in new_stats or val > new_stats[key]:
               new_stats[key] = val
           else:
@@ -348,10 +349,15 @@ class Server(LogData):
 
     # Parse the logs, but don't parse anything we've visited already
     loaded = 0
+    new_logs_loaded = 0
     log_path = os.path.join(self.location, 'logs', '')
     if os.path.exists(log_path) and self.log_parser:
       print('parsing logs...')
       filenames =  os.listdir(log_path)
+      file_count = len(filenames)
+      if self.log_limit is not None and self.log_limit < file_count:
+        file_count = self.log_limit
+
       for filename in filenames:
         self.socketio.emit('log_loaded', { "percent": loaded / len(filenames), "loading": filename })
         fullpath = os.path.join(log_path, filename)
@@ -373,6 +379,9 @@ class Server(LogData):
           else:
             f = open(fullpath)
 
+          new_logs_loaded = new_logs_loaded + 1
+          self.socketio.emit('load-progress', {'file': filename, 'percent': 100 * loaded / file_count}, broadcast=True)
+          
           if f is not None:
             new_data = LogData(mtime)
             date = date_from_name(shortname)
@@ -380,6 +389,9 @@ class Server(LogData):
               date = datetime.date.today()
             new_data.text = self.log_parser.parse_log(f, date, new_data.details, new_data.players)
             self.logs[shortname] = new_data
+
+    if new_logs_loaded > 0:
+      self.socketio.emit('load-complete', {}, broadcast=True)
 
     # Collapse the data into the current data
     self.clear()
