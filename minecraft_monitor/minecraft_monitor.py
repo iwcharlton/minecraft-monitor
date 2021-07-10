@@ -29,6 +29,15 @@ def create_app(config, log_limit):
   login_manager.init_app(app)
   login_manager.login_view = 'frontend.login'
 
+  # Create users from simple config
+  if 'users' in  config:
+    print('Loading users from simple config')
+    for user_id in config['users']:
+      user = config['users'][user_id]
+      User.add(user_id, user['name'], user['email'], user['password'])
+
+  # We may have more advance SQL user management as an alternative...
+
   @login_manager.user_loader
   def load_user(user_id):
     return User.get(user_id)
