@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added [user_sql.py](user_sql.py) for user management using a simple SQL DB.
+
+### Modified
+- Simple user management can be replaced with the SQL based users in config.
+
 ## [0.0.3]
 
 ### Modified

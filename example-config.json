@@ -11,5 +11,6 @@
       "email": "me@myself.i",
       "password": "sha256$generated-password-hash"
     }
-  }
+  },
+  "user-db": "alternative/path/to/DB.sql"
 }
