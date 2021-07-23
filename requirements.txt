@@ -5,3 +5,4 @@ flask-debug
 flask-socketio
 flask_login
 flask-nav
+requests

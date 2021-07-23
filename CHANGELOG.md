@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Modified
 - Simple user management can be replaced with the SQL based users in config.
 
+
+## [1.0.0]
+
+### Fixed
+- Fixed spelling on the index page.
+- Added requests to requirements.txt.
+
 ## [0.0.3]
 
 ### Modified
