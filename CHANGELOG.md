@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added the ability to auto-start the minecraft process.
+
 ## [1.0.0]
 
 ### Fixed

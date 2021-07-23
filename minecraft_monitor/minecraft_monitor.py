@@ -68,6 +68,10 @@ def create_app(config, log_limit):
   nav.init_app(app)
 
   socketio.run(app, host=config['host'], port=config['port'])
+  
+  # Respond to auto-start request and kick of the server
+  if 'auto-start' in config and config['auto-start']:
+    server.start()
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Run the Minecraft Server Monitor')
